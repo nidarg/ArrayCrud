@@ -2,6 +2,9 @@
 {
     public class SortedIntArray : IntArray
     {
+        const bool InsertVerify = true;
+        const bool SetVerify = true;
+
         public SortedIntArray() : base()
         {
         }
@@ -10,8 +13,8 @@
         {
             get => base[index];
             set
-                {
-                if (!VerifyIfSortedAtSetElement(index, value))
+            {
+                if (!VerifyIfSorted(index, value) || VerifyIfSorted(index, value) != SetVerify)
                 {
                     return;
                 }
@@ -32,7 +35,7 @@
 
         public override void Insert(int index, int element)
         {
-            if (!VerifyIfSortedAtInsertElement(index, element))
+            if (!VerifyIfSorted(index, element) || VerifyIfSorted(index, element) != InsertVerify)
             {
                 return;
             }
@@ -40,34 +43,24 @@
             base.Insert(index, element);
         }
 
-        private bool VerifyIfSortedAtSetElement(int index, int element)
+        private bool VerifyIfSorted(int index, int element)
         {
             if ((index == 0 && element <= base[index + 1]) || (index == Count && element >= base[index - 1]))
             {
                 return true;
             }
-
-            if (element >= base[index - 1] && element <= base[index + 1])
+            else if (element >= base[index - 1] && element <= base[index])
             {
-                return true;
+                return InsertVerify;
             }
-
-            return false;
-        }
-
-        private bool VerifyIfSortedAtInsertElement(int index, int element)
-        {
-            if ((index == 0 && element <= base[index + 1]) || (index == Count && element >= base[index - 1]))
+            else if (element >= base[index - 1] && element > base[index] && element <= base[index + 1])
             {
-                return true;
+                return SetVerify;
             }
-
-            if (element >= base[index - 1] && element <= base[index])
+            else
             {
-                return true;
+                return false;
             }
-
-            return false;
         }
 
         private int FindRightPosition(int element)
